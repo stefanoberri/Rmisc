@@ -16,6 +16,16 @@ getPkgsTree <- function(listOfPkgs,
     return(unlist(pkgsNames))
   }
 
+    
+  noVersion <- function(d){
+    invalidChar <- regexpr("\\>|\\(|\\s|\\=", d, perl= TRUE)[1]
+    if (invalidChar > 0){
+      return(substr(d, 0, invalidChar-1)) 
+    } else {
+      return (d)
+    }
+  }
+
   getDependencies <- function (packageName, PS){
     # recursive function
     # packageName is name of ONE package
@@ -35,6 +45,8 @@ getPkgsTree <- function(listOfPkgs,
     
     # take out 'R'
     cleanDeps <- dependencies[!isBase & dependencies != 'R']
+    # remove version in dependencies
+    cleanDeps <- unlist(lapply(cleanDeps, noVersion))
     
     # let's recurse 
     if (length(cleanDeps) == 0){
